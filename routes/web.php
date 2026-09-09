@@ -4,7 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductDashboardController;
+use App\Http\Controllers\SizeController;
 
+
+Route::redirect('/', '/product-dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -123,3 +126,40 @@ Route::post('/product/{product}/duplicate', [
     ProductController::class,
     'duplicate'
 ])->name('product.duplicate');
+
+
+/*
+|--------------------------------------------------------------------------
+| Size Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/size', [
+    SizeController::class,
+    'index'
+])->name('size.index');
+
+Route::get('/size/create', [
+    SizeController::class,
+    'create'
+])->name('size.create');
+
+Route::post('/size', [
+    SizeController::class,
+    'store'
+])->name('size.store');
+
+Route::get('/size/{size}/edit', [
+    SizeController::class,
+    'edit'
+])->name('size.edit');
+
+Route::put('/size/{size}', [
+    SizeController::class,
+    'update'
+])->name('size.update');
+
+Route::delete('/size/{size}', [
+    SizeController::class,
+    'destroy'
+])->name('size.destroy');

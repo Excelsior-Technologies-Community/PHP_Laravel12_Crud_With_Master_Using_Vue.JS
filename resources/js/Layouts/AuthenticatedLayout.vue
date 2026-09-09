@@ -28,16 +28,20 @@ const showingNavigationDropdown = ref(false)
 
                         <!-- Desktop Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                Dashboard
-                            </NavLink>
-
-                            <NavLink :href="route('posts.index')" :active="route().current('posts.index')">
-                                Posts
-                            </NavLink>
-
                             <NavLink :href="route('product.dashboard')" :active="route().current('product.dashboard')">
-                                📊 Product Analytics
+                                📊 Dashboard
+                            </NavLink>
+
+                            <NavLink :href="route('product.index')" :active="route().current('product.index') || route().current('product.create') || route().current('product.edit')">
+                                📦 Products
+                            </NavLink>
+
+                            <NavLink :href="route('category.index')" :active="route().current('category.*')">
+                                🏷️ Categories
+                            </NavLink>
+
+                            <NavLink :href="route('size.index')" :active="route().current('size.*')">
+                                📏 Sizes
                             </NavLink>
                         </div>
                     </div>
@@ -50,7 +54,7 @@ const showingNavigationDropdown = ref(false)
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
                                             class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300">
-                                            {{ $page.props.auth.user.name }}
+                                            {{ $page.props.auth?.user?.name || 'Administrator' }}
 
                                             <svg class="ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
@@ -97,12 +101,20 @@ const showingNavigationDropdown = ref(false)
             <!-- Mobile Navigation -->
             <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
                 <div class="space-y-1 pb-3 pt-2">
-                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                        Dashboard
+                    <ResponsiveNavLink :href="route('product.dashboard')" :active="route().current('product.dashboard')">
+                        📊 Dashboard
                     </ResponsiveNavLink>
 
-                    <ResponsiveNavLink :href="route('posts.index')" :active="route().current('posts.*')">
-                        Posts
+                    <ResponsiveNavLink :href="route('product.index')" :active="route().current('product.*')">
+                        📦 Products
+                    </ResponsiveNavLink>
+
+                    <ResponsiveNavLink :href="route('category.index')" :active="route().current('category.*')">
+                        🏷️ Categories
+                    </ResponsiveNavLink>
+
+                    <ResponsiveNavLink :href="route('size.index')" :active="route().current('size.*')">
+                        📏 Sizes
                     </ResponsiveNavLink>
                 </div>
 

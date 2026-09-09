@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
+import AppHeader from '@/Components/AppHeader.vue'
 
 const page = usePage()
 
@@ -23,6 +24,11 @@ const props = defineProps({
         default: () => [],
     },
 
+    sizes: {
+        type: Array,
+        default: () => [],
+    },
+
     filters: {
         type: Object,
         default: () => ({}),
@@ -37,6 +43,7 @@ const props = defineProps({
 
 const search = ref(props.filters.search ?? '')
 const categoryId = ref(props.filters.category_id ?? '')
+const sizeId = ref(props.filters.size_id ?? '')
 const stockStatus = ref(props.filters.stock_status ?? '')
 const minPrice = ref(props.filters.min_price ?? '')
 const maxPrice = ref(props.filters.max_price ?? '')
@@ -80,6 +87,7 @@ const applyFilters = () => {
             {
                 search: search.value,
                 category_id: categoryId.value,
+                size_id: sizeId.value,
                 stock_status: stockStatus.value,
                 min_price: minPrice.value,
                 max_price: maxPrice.value,
@@ -107,6 +115,7 @@ const changeSorting = () => {
         {
             search: search.value,
             category_id: categoryId.value,
+            size_id: sizeId.value,
             stock_status: stockStatus.value,
             min_price: minPrice.value,
             max_price: maxPrice.value,
@@ -130,6 +139,7 @@ const changeSorting = () => {
 const resetFilters = () => {
     search.value = ''
     categoryId.value = ''
+    sizeId.value = ''
     stockStatus.value = ''
     minPrice.value = ''
     maxPrice.value = ''
@@ -285,6 +295,13 @@ const exportProducts = () => {
         )
     }
 
+    if (sizeId.value) {
+        params.append(
+            'size_id',
+            sizeId.value
+        )
+    }
+
     if (stockStatus.value) {
         params.append(
             'stock_status',
@@ -354,8 +371,8 @@ const stockClass = (product) => {
 </script>
 
 <template>
+<AppHeader activeTab="products" />
 
-```
 <div class="min-h-screen bg-gray-100 py-10 px-4">
 
     <div class="max-w-7xl mx-auto">
@@ -522,6 +539,37 @@ const stockClass = (product) => {
                             :value="category.id"
                         >
                             {{ category.name }}
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Size -->
+
+                <div>
+
+                    <label class="filter-label">
+                        Size
+                    </label>
+
+                    <select
+                        v-model="sizeId"
+                        @change="applyFilters"
+                        class="filter-input"
+                    >
+
+                        <option value="">
+                            All Sizes
+                        </option>
+
+                        <option
+                            v-for="size in sizes"
+                            :key="size.id"
+                            :value="size.id"
+                        >
+                            {{ size.name }}
                         </option>
 
                     </select>
@@ -796,6 +844,10 @@ const stockClass = (product) => {
                                 Category
                             </th>
 
+                            <th class="th">
+                                Size
+                            </th>
+
                             <th class="th text-center">
                                 Stock
                             </th>
@@ -884,6 +936,22 @@ const stockClass = (product) => {
                                     {{
                                         product.category?.name ??
                                         'N/A'
+                                    }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- Size -->
+
+                            <td class="td">
+
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-xs"
+                                >
+                                    📏 {{
+                                        product.size?.name ??
+                                        'Free Size'
                                     }}
                                 </span>
 
@@ -1006,8 +1074,6 @@ const stockClass = (product) => {
     </div>
 
 </div>
-```
-
 </template>
 
 <style scoped>

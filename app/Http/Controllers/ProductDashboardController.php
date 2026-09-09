@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Size;
 use Inertia\Inertia;
 
 class ProductDashboardController extends Controller
@@ -14,8 +15,8 @@ class ProductDashboardController extends Controller
     public function index()
     {
         $totalProducts = Product::count();
-
         $totalCategories = Category::count();
+        $totalSizes = Size::count();
 
         $totalStock = Product::sum('stock_quantity');
 
@@ -56,7 +57,18 @@ class ProductDashboardController extends Controller
                 ];
             });
 
-        $lowStockProducts = Product::with('category')
+        $sizeStats = Size::withCount('products')
+            ->orderByDesc('products_count')
+            ->get()
+            ->map(function ($size) {
+                return [
+                    'id' => $size->id,
+                    'name' => $size->name,
+                    'products_count' => $size->products_count,
+                ];
+            });
+
+        $lowStockProducts = Product::with(['category', 'size'])
             ->where('stock_quantity', '>', 0)
             ->whereColumn(
                 'stock_quantity',
@@ -67,7 +79,7 @@ class ProductDashboardController extends Controller
             ->limit(5)
             ->get();
 
-        $outOfStockProducts = Product::with('category')
+        $outOfStockProducts = Product::with(['category', 'size'])
             ->where('stock_quantity', '<=', 0)
             ->latest()
             ->limit(5)
@@ -77,6 +89,7 @@ class ProductDashboardController extends Controller
             'statistics' => [
                 'total_products' => $totalProducts,
                 'total_categories' => $totalCategories,
+                'total_sizes' => $totalSizes,
                 'total_stock' => $totalStock,
                 'in_stock' => $inStock,
                 'low_stock' => $lowStock,
@@ -85,9 +98,8 @@ class ProductDashboardController extends Controller
             ],
 
             'categoryStats' => $categoryStats,
-
+            'sizeStats' => $sizeStats,
             'lowStockProducts' => $lowStockProducts,
-
             'outOfStockProducts' => $outOfStockProducts,
         ]);
     }
