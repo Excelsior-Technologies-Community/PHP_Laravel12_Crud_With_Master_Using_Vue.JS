@@ -5,6 +5,13 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductDashboardController;
 
+
+/*
+|--------------------------------------------------------------------------
+| Category Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/category', [
     CategoryController::class,
     'index'
@@ -83,3 +90,36 @@ Route::delete('/product/{product}', [
     ProductController::class,
     'destroy'
 ])->name('product.destroy');
+
+
+/*
+|--------------------------------------------------------------------------
+| NEW PRODUCT FEATURES
+|--------------------------------------------------------------------------
+*/
+
+/*
+| Bulk delete
+*/
+Route::delete('/products/bulk-delete', [
+    ProductController::class,
+    'bulkDestroy'
+])->name('products.bulk-delete');
+
+
+/*
+| Export CSV
+*/
+Route::get('/products/export', [
+    ProductController::class,
+    'export'
+])->name('products.export');
+
+
+/*
+| Duplicate product
+*/
+Route::post('/product/{product}/duplicate', [
+    ProductController::class,
+    'duplicate'
+])->name('product.duplicate');

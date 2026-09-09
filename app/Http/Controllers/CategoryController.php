@@ -9,65 +9,122 @@ use Inertia\Inertia;
 class CategoryController extends Controller
 {
     /**
-     * Display all categories
+     * Display categories with search, pagination and product count.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Category::withCount('products');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Category Search
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(
+                'name',
+                'like',
+                '%' . $search . '%'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pagination
+        |--------------------------------------------------------------------------
+        */
+        $categories = $query
+            ->orderBy('name')
+            ->paginate(5)
+            ->withQueryString();
+
         return Inertia::render('Category/Index', [
-            'categories' => Category::latest()->get()
+            'categories' => $categories,
+
+            'filters' => [
+                'search' => $request->search ?? '',
+            ],
         ]);
     }
 
+
     /**
-     * Show create category page
+     * Show create category page.
      */
     public function create()
     {
         return Inertia::render('Category/Create');
     }
 
+
     /**
-     * Store new category in database
+     * Store new category.
      */
     public function store(Request $request)
     {
-        // Validate request
-        $request->validate([
-            'name' => 'required'
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
         ]);
 
-        // Create category
-        Category::create($request->all());
+        Category::create($validated);
 
-        // Redirect to category list
-        return redirect()->route('category.index');
+        return redirect()
+            ->route('category.index')
+            ->with(
+                'success',
+                'Category created successfully.'
+            );
     }
 
+
     /**
-     * Show edit category page
+     * Show edit category page.
      */
     public function edit(Category $category)
     {
         return Inertia::render('Category/Edit', [
-            'category' => $category
+            'category' => $category,
         ]);
     }
 
-    /**
-     * Update category data
-     */
-    public function update(Request $request, Category $category)
-    {
-        $category->update($request->all());
-        return redirect()->route('category.index');
-    }
 
     /**
-     * Delete category
+     * Update category.
+     */
+    public function update(
+        Request $request,
+        Category $category
+    ) {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $category->update($validated);
+
+        return redirect()
+            ->route('category.index')
+            ->with(
+                'success',
+                'Category updated successfully.'
+            );
+    }
+
+
+    /**
+     * Delete category.
      */
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->back();
+
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Category deleted successfully.'
+            );
     }
 }
