@@ -11,6 +11,7 @@ class Product extends Model
         'details',
         'price',
         'category_id',
+        'size_id',
         'stock_quantity',
         'low_stock_threshold',
     ];
@@ -19,11 +20,18 @@ class Product extends Model
         'price' => 'decimal:2',
         'stock_quantity' => 'integer',
         'low_stock_threshold' => 'integer',
+        'category_id' => 'integer',
+        'size_id' => 'integer',
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
     }
 
     /**

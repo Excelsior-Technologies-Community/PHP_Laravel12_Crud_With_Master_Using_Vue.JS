@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Size;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,7 +15,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with('category');
+        $query = Product::with(['category', 'size']);
 
         /*
         |--------------------------------------------------------------------------
@@ -41,6 +42,19 @@ class ProductController extends Controller
             $query->where(
                 'category_id',
                 $request->category_id
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Size Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('size_id')) {
+            $query->where(
+                'size_id',
+                $request->size_id
             );
         }
 
@@ -130,8 +144,6 @@ class ProductController extends Controller
         /*
         | Default sorting:
         | ID Ascending
-        |
-        | 1, 2, 3, 4, 5...
         */
 
         $sortBy = $request->input(
@@ -143,10 +155,6 @@ class ProductController extends Controller
             'sort_order',
             'asc'
         );
-
-        /*
-        | Prevent invalid sorting values
-        */
 
         if (!in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
@@ -178,6 +186,8 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'category_id' => $product->category_id,
                     'category' => $product->category,
+                    'size_id' => $product->size_id,
+                    'size' => $product->size,
                     'stock_quantity' => $product->stock_quantity,
                     'low_stock_threshold' => $product->low_stock_threshold,
                     'stock_status' => $product->stock_status,
@@ -194,16 +204,15 @@ class ProductController extends Controller
             'Product/Index',
             [
                 'products' => $products,
-
                 'categories' => Category::orderBy('name')->get(),
-
+                'sizes' => Size::orderBy('name')->get(),
                 'filters' => [
                     'search' => $request->search ?? '',
                     'category_id' => $request->category_id ?? '',
+                    'size_id' => $request->size_id ?? '',
                     'stock_status' => $request->stock_status ?? '',
                     'min_price' => $request->min_price ?? '',
                     'max_price' => $request->max_price ?? '',
-
                     'sort_by' => $sortBy,
                     'sort_order' => $sortOrder,
                 ],
@@ -221,6 +230,7 @@ class ProductController extends Controller
             'Product/Create',
             [
                 'categories' => Category::orderBy('name')->get(),
+                'sizes' => Size::orderBy('name')->get(),
             ]
         );
     }
@@ -236,6 +246,7 @@ class ProductController extends Controller
             'details' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
+            'size_id' => 'nullable|exists:sizes,id',
             'stock_quantity' => 'required|integer|min:0',
             'low_stock_threshold' => 'required|integer|min:0',
         ]);
@@ -259,9 +270,9 @@ class ProductController extends Controller
         return Inertia::render(
             'Product/Edit',
             [
-                'product' => $product,
-
+                'product' => $product->load(['category', 'size']),
                 'categories' => Category::orderBy('name')->get(),
+                'sizes' => Size::orderBy('name')->get(),
             ]
         );
     }
@@ -279,6 +290,7 @@ class ProductController extends Controller
             'details' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
+            'size_id' => 'nullable|exists:sizes,id',
             'stock_quantity' => 'required|integer|min:0',
             'low_stock_threshold' => 'required|integer|min:0',
         ]);
@@ -379,6 +391,13 @@ class ProductController extends Controller
             );
         }
 
+        if ($request->filled('size_id')) {
+            $query->where(
+                'size_id',
+                $request->size_id
+            );
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Stock Filter
@@ -457,6 +476,7 @@ class ProductController extends Controller
         */
 
         $products = $query
+            ->with(['category', 'size'])
             ->orderBy('id', 'asc')
             ->get();
 
@@ -485,6 +505,7 @@ class ProductController extends Controller
                         'Details',
                         'Price',
                         'Category',
+                        'Size',
                         'Stock Quantity',
                         'Low Stock Threshold',
                         'Stock Status',
@@ -505,6 +526,7 @@ class ProductController extends Controller
                             $product->details,
                             $product->price,
                             $product->category?->name ?? 'N/A',
+                            $product->size?->name ?? 'N/A',
                             $product->stock_quantity,
                             $product->low_stock_threshold,
                             $product->stock_status,
