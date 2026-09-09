@@ -35,7 +35,10 @@ class Product extends Model
             return 'Out of Stock';
         }
 
-        if ($this->stock_quantity <= $this->low_stock_threshold) {
+        if (
+            $this->stock_quantity <=
+            $this->low_stock_threshold
+        ) {
             return 'Low Stock';
         }
 
