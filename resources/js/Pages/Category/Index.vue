@@ -1,8 +1,7 @@
 <script setup>
-
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
-
+import AppHeader from '@/Components/AppHeader.vue'
 
 const props = defineProps({
 
@@ -147,14 +146,11 @@ const goToPage = (url) => {
 
 
 <template>
+    <div class="min-h-screen bg-gray-100 pb-12">
+        <!-- Unified Navbar -->
+        <AppHeader activeTab="categories" />
 
-    <div
-        class="min-h-screen bg-gray-100 py-10 px-4"
-    >
-
-        <div
-            class="max-w-6xl mx-auto"
-        >
+        <div class="max-w-6xl mx-auto px-4">
 
             <!-- Header -->
 

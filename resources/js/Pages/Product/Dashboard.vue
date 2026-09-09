@@ -1,22 +1,24 @@
-<script setup>
+﻿<script setup>
 import { computed } from 'vue'
+import AppHeader from '@/Components/AppHeader.vue'
 
 const props = defineProps({
     statistics: {
         type: Object,
         required: true
     },
-
     categoryStats: {
         type: Array,
         default: () => []
     },
-
+    sizeStats: {
+        type: Array,
+        default: () => []
+    },
     lowStockProducts: {
         type: Array,
         default: () => []
     },
-
     outOfStockProducts: {
         type: Array,
         default: () => []
@@ -34,428 +36,283 @@ const inventoryValue = computed(() => {
 </script>
 
 <template>
+    <div class="min-h-screen bg-slate-50 pb-16">
+        <!-- Unified Navbar -->
+        <AppHeader activeTab="dashboard" />
 
-    <div class="min-h-screen bg-gray-100 py-10 px-4">
-
-        <div class="max-w-7xl mx-auto">
-
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800">
-                        📊 Product Dashboard
+                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                        📊 Product Analytics & Dashboard
                     </h1>
-
-                    <p class="text-gray-500 mt-1">
-                        Product, category and inventory overview.
+                    <p class="text-sm text-slate-500 mt-1">
+                        Real-time overview of products, categories, size masters, and inventory health.
                     </p>
                 </div>
 
-                <a
-                    href="/product"
-                    class="btn-primary"
-                >
-                    ← Product List
-                </a>
+                <div class="flex items-center gap-3">
+                    <a
+                        href="/product"
+                        class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md transition"
+                    >
+                        📦 Product List
+                    </a>
 
+                    <a
+                        href="/size"
+                        class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-xl shadow-xs transition"
+                    >
+                        📏 Size Master
+                    </a>
+                </div>
             </div>
 
-            <!-- Main Statistics -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-
-                <!-- Products -->
-                <div class="stat-card">
-
-                    <div class="icon bg-blue-100 text-blue-600">
+            <!-- Main Top Statistics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <!-- Total Products -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold">
                         📦
                     </div>
-
                     <div>
-                        <p class="stat-label">
-                            Total Products
-                        </p>
-
-                        <p class="stat-number">
-                            {{ statistics.total_products }}
-                        </p>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Products</p>
+                        <p class="text-2xl font-black text-slate-800">{{ statistics.total_products }}</p>
                     </div>
-
                 </div>
 
-                <!-- Categories -->
-                <div class="stat-card">
-
-                    <div class="icon bg-purple-100 text-purple-600">
+                <!-- Total Categories -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl font-bold">
                         🏷️
                     </div>
-
                     <div>
-                        <p class="stat-label">
-                            Categories
-                        </p>
-
-                        <p class="stat-number">
-                            {{ statistics.total_categories }}
-                        </p>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Categories</p>
+                        <p class="text-2xl font-black text-slate-800">{{ statistics.total_categories }}</p>
                     </div>
-
                 </div>
 
-                <!-- Stock -->
-                <div class="stat-card">
-
-                    <div class="icon bg-green-100 text-green-600">
-                        📦
+                <!-- Total Sizes -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold">
+                        📏
                     </div>
-
                     <div>
-                        <p class="stat-label">
-                            Total Stock
-                        </p>
-
-                        <p class="stat-number">
-                            {{ statistics.total_stock }}
-                        </p>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sizes</p>
+                        <p class="text-2xl font-black text-slate-800">{{ statistics.total_sizes ?? 0 }}</p>
                     </div>
+                </div>
 
+                <!-- Total Stock -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold">
+                        📊
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Units</p>
+                        <p class="text-2xl font-black text-slate-800">{{ statistics.total_stock }}</p>
+                    </div>
                 </div>
 
                 <!-- Inventory Value -->
-                <div class="stat-card">
-
-                    <div class="icon bg-indigo-100 text-indigo-600">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl font-bold">
                         💰
                     </div>
-
                     <div>
-                        <p class="stat-label">
-                            Inventory Value
-                        </p>
-
-                        <p class="stat-number text-xl">
-                            ₹{{ inventoryValue }}
-                        </p>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Inventory Value</p>
+                        <p class="text-xl font-black text-slate-800">₹{{ inventoryValue }}</p>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Stock Statistics -->
+            <!-- Stock Status Health Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-
-                <div class="status-card border-green-200 bg-green-50">
-
-                    <p class="text-green-700 font-medium">
-                        In Stock
-                    </p>
-
-                    <p class="text-3xl font-bold text-green-800 mt-2">
-                        {{ statistics.in_stock }}
-                    </p>
-
+                <div class="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/60 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-bold uppercase tracking-wider text-emerald-800">In Stock Products</p>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    </div>
+                    <p class="text-3xl font-black text-emerald-900 mt-2">{{ statistics.in_stock }}</p>
+                    <p class="text-xs text-emerald-700 mt-1">Healthy inventory levels</p>
                 </div>
 
-                <div class="status-card border-yellow-200 bg-yellow-50">
-
-                    <p class="text-yellow-700 font-medium">
-                        Low Stock
-                    </p>
-
-                    <p class="text-3xl font-bold text-yellow-800 mt-2">
-                        {{ statistics.low_stock }}
-                    </p>
-
+                <div class="p-5 rounded-2xl border border-amber-200 bg-amber-50/60 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-bold uppercase tracking-wider text-amber-800">Low Stock Alert</p>
+                        <span class="w-3 h-3 rounded-full bg-amber-500 animate-ping"></span>
+                    </div>
+                    <p class="text-3xl font-black text-amber-900 mt-2">{{ statistics.low_stock }}</p>
+                    <p class="text-xs text-amber-700 mt-1">Below threshold, re-order soon</p>
                 </div>
 
-                <div class="status-card border-red-200 bg-red-50">
-
-                    <p class="text-red-700 font-medium">
-                        Out of Stock
-                    </p>
-
-                    <p class="text-3xl font-bold text-red-800 mt-2">
-                        {{ statistics.out_of_stock }}
-                    </p>
-
+                <div class="p-5 rounded-2xl border border-rose-200 bg-rose-50/60 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-bold uppercase tracking-wider text-rose-800">Out of Stock</p>
+                        <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                    </div>
+                    <p class="text-3xl font-black text-rose-900 mt-2">{{ statistics.out_of_stock }}</p>
+                    <p class="text-xs text-rose-700 mt-1">Zero units available</p>
                 </div>
-
             </div>
 
-            <!-- Two columns -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                <!-- Category statistics -->
-                <div class="panel">
-
-                    <div class="panel-header">
-                        <h2>
-                            🏷️ Products by Category
+            <!-- Distribution & Alerts Breakdown (2x2 Grid) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Products by Category -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span>🏷️</span>
+                            <span>Products by Category</span>
                         </h2>
+                        <a href="/category" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                            View All →
+                        </a>
                     </div>
 
-                    <div
-                        v-if="categoryStats.length === 0"
-                        class="empty"
-                    >
+                    <div v-if="categoryStats.length === 0" class="py-8 text-center text-sm text-slate-400">
                         No category data available.
                     </div>
 
-                    <div v-else>
-
+                    <div v-else class="space-y-3.5 max-h-72 overflow-y-auto pr-1">
                         <div
                             v-for="category in categoryStats"
                             :key="category.id"
-                            class="category-row"
+                            class="group"
                         >
-
-                            <div class="flex justify-between mb-2">
-
-                                <span class="font-medium text-gray-700">
-                                    {{ category.name }}
-                                </span>
-
-                                <span class="font-semibold text-gray-800">
-                                    {{ category.products_count }}
-                                </span>
-
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-700">{{ category.name }}</span>
+                                <span class="text-slate-900 font-bold">{{ category.products_count }} {{ category.products_count === 1 ? 'item' : 'items' }}</span>
                             </div>
-
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                                 <div
-                                    class="bg-blue-600 h-2 rounded-full"
+                                    class="bg-indigo-600 h-2 rounded-full transition-all duration-500"
                                     :style="{
-                                        width:
-                                            Math.min(
-                                                100,
-                                                (
-                                                    category.products_count /
-                                                    Math.max(
-                                                        ...categoryStats.map(
-                                                            c =>
-                                                                c.products_count
-                                                        ),
-                                                        1
-                                                    )
-                                                ) * 100
-                                            ) + '%'
+                                        width: Math.min(100, (category.products_count / Math.max(...categoryStats.map(c => c.products_count), 1)) * 100) + '%'
                                     }"
                                 ></div>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
-                <!-- Low stock -->
-                <div class="panel">
-
-                    <div class="panel-header">
-                        <h2>
-                            ⚠️ Low Stock Products
+                <!-- Products by Size -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span>📏</span>
+                            <span>Products by Size Master</span>
                         </h2>
+                        <a href="/size" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                            Manage Sizes →
+                        </a>
                     </div>
 
-                    <div
-                        v-if="lowStockProducts.length === 0"
-                        class="empty text-green-600"
-                    >
-                        ✓ No low stock products.
+                    <div v-if="sizeStats.length === 0" class="py-8 text-center text-sm text-slate-400">
+                        No size data available.
                     </div>
 
-                    <div v-else>
+                    <div v-else class="space-y-3.5 max-h-72 overflow-y-auto pr-1">
+                        <div
+                            v-for="size in sizeStats"
+                            :key="size.id"
+                            class="group"
+                        >
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-700 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                                    {{ size.name }}
+                                </span>
+                                <span class="text-slate-900 font-bold">{{ size.products_count }} {{ size.products_count === 1 ? 'product' : 'products' }}</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div
+                                    class="bg-purple-600 h-2 rounded-full transition-all duration-500"
+                                    :style="{
+                                        width: Math.min(100, (size.products_count / Math.max(...sizeStats.map(s => s.products_count), 1)) * 100) + '%'
+                                    }"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Low Stock & Out of Stock Products Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Low Stock Products -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span>⚠️</span>
+                            <span>Low Stock Products</span>
+                        </h2>
+                        <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                            {{ lowStockProducts.length }} items
+                        </span>
+                    </div>
+
+                    <div v-if="lowStockProducts.length === 0" class="py-8 text-center text-xs font-medium text-emerald-600 bg-emerald-50/50 rounded-xl">
+                        ✓ All stock levels are currently above alert threshold.
+                    </div>
+
+                    <div v-else class="divide-y divide-slate-100">
                         <div
                             v-for="product in lowStockProducts"
                             :key="product.id"
-                            class="product-row"
+                            class="py-3 flex items-center justify-between gap-3"
                         >
-
                             <div>
-
-                                <p class="font-semibold text-gray-800">
-                                    {{ product.name }}
-                                </p>
-
-                                <p class="text-sm text-gray-500">
-                                    {{ product.category?.name ?? 'N/A' }}
-                                </p>
-
+                                <p class="text-sm font-semibold text-slate-900">{{ product.name }}</p>
+                                <div class="flex items-center gap-2 mt-0.5 text-xs text-slate-500">
+                                    <span>{{ product.category?.name ?? 'No Category' }}</span>
+                                    <span v-if="product.size" class="text-indigo-600 font-medium">• Size: {{ product.size.name }}</span>
+                                </div>
                             </div>
-
-                            <span class="stock-warning">
-                                {{ product.stock_quantity }} left
+                            <span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-100 text-amber-800 whitespace-nowrap">
+                                {{ product.stock_quantity }} units left
                             </span>
-
                         </div>
+                    </div>
+                </div>
 
+                <!-- Out of Stock Products -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span>🚫</span>
+                            <span>Out of Stock Products</span>
+                        </h2>
+                        <span class="text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                            {{ outOfStockProducts.length }} items
+                        </span>
                     </div>
 
-                </div>
+                    <div v-if="outOfStockProducts.length === 0" class="py-8 text-center text-xs font-medium text-emerald-600 bg-emerald-50/50 rounded-xl">
+                        ✓ No products are currently out of stock.
+                    </div>
 
+                    <div v-else class="divide-y divide-slate-100">
+                        <div
+                            v-for="product in outOfStockProducts"
+                            :key="product.id"
+                            class="py-3 flex items-center justify-between gap-3"
+                        >
+                            <div>
+                                <p class="text-sm font-semibold text-slate-900">{{ product.name }}</p>
+                                <div class="flex items-center gap-2 mt-0.5 text-xs text-slate-500">
+                                    <span>{{ product.category?.name ?? 'No Category' }}</span>
+                                    <span v-if="product.size" class="text-indigo-600 font-medium">• Size: {{ product.size.name }}</span>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-rose-100 text-rose-800 whitespace-nowrap">
+                                Out of Stock
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Out of stock -->
-            <div class="panel mt-6">
-
-                <div class="panel-header">
-                    <h2>
-                        🚫 Out of Stock Products
-                    </h2>
-                </div>
-
-                <div
-                    v-if="outOfStockProducts.length === 0"
-                    class="empty text-green-600"
-                >
-                    ✓ No products are currently out of stock.
-                </div>
-
-                <div v-else class="overflow-x-auto">
-
-                    <table class="w-full">
-
-                        <thead>
-
-                            <tr>
-                                <th class="table-head">
-                                    Product
-                                </th>
-
-                                <th class="table-head">
-                                    Category
-                                </th>
-
-                                <th class="table-head">
-                                    Price
-                                </th>
-
-                                <th class="table-head text-center">
-                                    Stock
-                                </th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr
-                                v-for="product in outOfStockProducts"
-                                :key="product.id"
-                            >
-
-                                <td class="table-cell font-semibold">
-                                    {{ product.name }}
-                                </td>
-
-                                <td class="table-cell">
-                                    {{ product.category?.name ?? 'N/A' }}
-                                </td>
-
-                                <td class="table-cell">
-                                    ₹{{ Number(product.price).toFixed(2) }}
-                                </td>
-
-                                <td class="table-cell text-center">
-
-                                    <span class="out-stock">
-                                        0
-                                    </span>
-
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
         </div>
-
     </div>
-
 </template>
-
-<style scoped>
-
-.stat-card {
-    @apply bg-white rounded-xl shadow-md p-5
-           flex items-center gap-4;
-}
-
-.icon {
-    @apply w-12 h-12 rounded-xl flex items-center
-           justify-center text-2xl;
-}
-
-.stat-label {
-    @apply text-sm text-gray-500;
-}
-
-.stat-number {
-    @apply text-2xl font-bold text-gray-800 mt-1;
-}
-
-.status-card {
-    @apply rounded-xl border p-5;
-}
-
-.panel {
-    @apply bg-white rounded-xl shadow-md overflow-hidden;
-}
-
-.panel-header {
-    @apply px-5 py-4 border-b bg-gray-50;
-}
-
-.panel-header h2 {
-    @apply text-lg font-semibold text-gray-800;
-}
-
-.category-row {
-    @apply px-5 py-4 border-b last:border-b-0;
-}
-
-.product-row {
-    @apply px-5 py-4 border-b last:border-b-0
-           flex items-center justify-between gap-4;
-}
-
-.stock-warning {
-    @apply px-3 py-1 rounded-full bg-yellow-100
-           text-yellow-700 text-sm font-semibold;
-}
-
-.out-stock {
-    @apply px-3 py-1 rounded-full bg-red-100
-           text-red-700 text-sm font-semibold;
-}
-
-.empty {
-    @apply p-8 text-center text-gray-500;
-}
-
-.table-head {
-    @apply px-5 py-3 text-left bg-gray-50
-           border-b font-semibold text-gray-700;
-}
-
-.table-cell {
-    @apply px-5 py-4 border-b text-gray-700;
-}
-
-.btn-primary {
-    @apply bg-blue-600 text-white px-5 py-3 rounded-lg
-           hover:bg-blue-700 transition;
-}
-
-</style>
